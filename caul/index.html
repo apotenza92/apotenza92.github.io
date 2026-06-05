@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Download Caul</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon-32.png" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/dark/icon-32.png" media="(prefers-color-scheme: dark)" />
+    <link rel="apple-touch-icon" href="assets/icons/icon-256.png" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        color-scheme: light dark;
+        --accent: #34424A;
+        --accent-hover: #263238;
+        --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #edf1f2 50%, #f8fafc 100%);
+        --border: #d8dee1;
+        --btn-shadow: rgba(52, 66, 74, 0.24);
+        --code-bg: #f3f5f6;
+        --space-xs: 0.55rem;
+        --space-sm: 0.85rem;
+        --space-md: 1.6rem;
+        --space-lg: 2.75rem;
+        --text: #161d20;
+        --text-muted: #607078;
+        --text-subtle: #82919a;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg-gradient: linear-gradient(135deg, #05080a 0%, #101619 50%, #080d10 100%);
+          --border: #2d3a40;
+          --btn-shadow: rgba(142, 166, 173, 0.24);
+          --code-bg: #11191d;
+          --text: #f5f8f9;
+          --text-muted: #9aadb4;
+          --text-subtle: #758891;
+        }
+      }
+
+      body {
+        align-items: flex-start;
+        background: var(--bg-gradient);
+        color: var(--text);
+        display: flex;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        justify-content: center;
+        min-height: 100vh;
+        padding-top: 3rem;
+      }
+
+      body.beta-mode {
+        --accent: #8f7f45;
+        --accent-hover: #6f6338;
+        --btn-shadow: rgba(184, 164, 106, 0.28);
+      }
+
+      .container {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        max-width: 600px;
+        padding: 2.25rem 2rem;
+        text-align: center;
+        width: 100%;
+      }
+
+      .icon {
+        border-radius: 20px;
+        height: 96px;
+        width: 96px;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 0.92rem;
+        line-height: 1.5;
+        margin: 0 auto;
+        max-width: 420px;
+      }
+
+      .github-icon-link {
+        align-items: center;
+        color: var(--text-muted);
+        display: inline-flex;
+        font-size: 0.85rem;
+        font-weight: 500;
+        gap: var(--space-xs);
+        position: relative;
+        z-index: 1;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .github-icon-link:hover {
+        color: var(--accent);
+      }
+
+      .github-icon-link svg {
+        height: 22px;
+        width: 22px;
+      }
+
+      .channel-toggle,
+      .platform-toggle,
+      .arch-toggle,
+      .format-toggle {
+        display: flex;
+        justify-content: center;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .channel-btn,
+      .platform-btn,
+      .arch-btn,
+      .format-btn {
+        align-items: center;
+        background: none;
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        cursor: pointer;
+        display: inline-flex;
+        font-size: 0.85rem;
+        gap: var(--space-xs);
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
+      }
+
+      .platform-btn svg {
+        height: 15px;
+        width: 15px;
+      }
+
+      .channel-btn:first-child,
+      .platform-btn:first-child,
+      .arch-btn:first-child,
+      .format-btn:first-child {
+        border-radius: 8px 0 0 8px;
+      }
+
+      .channel-btn:last-child,
+      .platform-btn:last-child,
+      .arch-btn:last-child,
+      .format-btn:last-child {
+        border-radius: 0 8px 8px 0;
+      }
+
+      .channel-btn:not(:first-child),
+      .platform-btn:not(:first-child),
+      .arch-btn:not(:first-child),
+      .format-btn:not(:first-child) {
+        margin-left: -1px;
+      }
+
+      .channel-btn:hover:not(.active),
+      .platform-btn:hover:not(.active),
+      .arch-btn:hover:not(.active),
+      .format-btn:hover:not(.active) {
+        border-color: var(--accent);
+        color: var(--accent);
+        position: relative;
+        z-index: 1;
+      }
+
+      .channel-btn.active,
+      .platform-btn.active,
+      .arch-btn.active,
+      .format-btn.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: white;
+        position: relative;
+        z-index: 1;
+      }
+
+      .version-display {
+        color: var(--accent);
+        display: none;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .version-display.visible {
+        display: block;
+      }
+
+      .release-controls {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+        position: relative;
+        z-index: 1;
+      }
+
+      .download-wrapper {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: 1.65rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .selection-flow {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        gap: 1.65rem;
+        position: relative;
+        width: 100%;
+      }
+
+      .download-btn {
+        align-items: center;
+        background: var(--accent);
+        border-radius: 8px;
+        box-shadow: 0 8px 22px var(--btn-shadow);
+        color: white;
+        display: inline-flex;
+        font-size: 0.9rem;
+        font-weight: 500;
+        gap: var(--space-xs);
+        padding: 0.65rem 1.25rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .download-btn:hover {
+        background: var(--accent-hover);
+        transform: translateY(-1px);
+      }
+
+      .download-btn svg {
+        height: 16px;
+        width: 16px;
+      }
+
+      .download-links {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+        justify-content: center;
+      }
+
+      .download-btn.secondary {
+        background: transparent;
+        border: 1px solid var(--accent);
+        box-shadow: none;
+        color: var(--accent);
+      }
+
+      .download-btn.secondary:hover {
+        background: var(--code-bg);
+      }
+
+      .extra-download-links {
+        display: none;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        justify-content: center;
+        max-width: 520px;
+      }
+
+      .extra-download-links a {
+        color: var(--accent);
+        font-size: 0.78rem;
+        text-decoration: none;
+      }
+
+      .extra-download-links a:hover {
+        text-decoration: underline;
+      }
+
+      .homebrew-section {
+        display: block;
+        width: min(100%, 420px);
+      }
+
+      .command-label {
+        color: var(--text-muted);
+        display: block;
+        font-size: 0.75rem;
+        margin: 0;
+      }
+
+      .command-box {
+        align-items: center;
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text);
+        cursor: pointer;
+        display: inline-flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        justify-content: center;
+        min-width: 220px;
+        overflow: hidden;
+        padding: 0.55rem 0.85rem 0.65rem;
+        transition: border-color 0.2s ease, transform 0.2s ease;
+      }
+
+      .command-box:hover {
+        border-color: var(--accent);
+        transform: translateY(-1px);
+      }
+
+      .format-command {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .format-command code {
+        display: none;
+      }
+
+      .copy-btn {
+        align-items: center;
+        background: none;
+        border: none;
+        color: var(--accent);
+        cursor: pointer;
+        display: flex;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        gap: var(--space-xs);
+        font-size: 0.72rem;
+        font-weight: 600;
+        line-height: 1;
+        padding: 0;
+      }
+
+      .copy-btn svg {
+        height: 15px;
+        width: 15px;
+      }
+
+      .coming-soon {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--text-muted);
+        display: none;
+        font-size: 0.95rem;
+        margin: 0 auto;
+        max-width: 360px;
+        padding: 1rem 1.25rem;
+      }
+
+      .coming-soon strong {
+        color: var(--text);
+        display: block;
+        font-size: 1rem;
+        margin-bottom: var(--space-xs);
+      }
+
+      .beta-notice {
+        border-radius: 8px;
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        line-height: 1.45;
+        margin: 0 auto;
+        max-width: 420px;
+        padding: 0.65rem 1rem;
+      }
+
+      .beta-notice {
+        background: rgba(184, 164, 106, 0.12);
+        border: 1px solid rgba(184, 164, 106, 0.36);
+        display: none;
+      }
+
+      body.beta-mode .beta-notice {
+        display: block;
+      }
+
+      body.beta-mode .command-label {
+        color: var(--accent);
+      }
+
+      @media (max-width: 520px) {
+        body {
+          padding-top: 1.5rem;
+        }
+
+        .container {
+          padding: 1.5rem 1.25rem;
+        }
+
+        .platform-toggle,
+        .arch-toggle,
+        .format-toggle {
+          flex-wrap: wrap;
+          gap: var(--space-sm);
+        }
+
+        .platform-btn,
+        .arch-btn,
+        .format-btn {
+          border-radius: 8px !important;
+          margin-left: 0 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <img id="app-icon" class="icon" src="assets/icons/icon-rounded.png" alt="Caul icon" />
+      <h1>Download Caul</h1>
+      <p class="subtitle">Named from the Latin root for whispering or murmuring, Caul is fast, private AI for live calls, with local transcription first and your existing ChatGPT subscription for the AI model.</p>
+
+      <div class="selection-flow" id="selection-flow">
+        <a class="github-icon-link" href="https://github.com/apotenza92/caul" aria-label="View Caul on GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 .5a12 12 0 0 0-3.8 23.39c.6.11.82-.26.82-.58v-2.22c-3.34.73-4.04-1.42-4.04-1.42-.55-1.4-1.34-1.77-1.34-1.77-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.31-5.47-1.34-5.47-5.94 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.62-2.81 5.63-5.49 5.93.43.38.82 1.11.82 2.24v3.32c0 .32.22.7.83.58A12 12 0 0 0 12 .5Z"/>
+          </svg>
+          <span>Open source</span>
+        </a>
+
+        <div class="release-controls">
+          <div id="version-display" class="version-display"></div>
+
+          <div class="channel-toggle" aria-label="Release channel">
+            <button id="channel-stable" class="channel-btn active" type="button">Stable</button>
+            <button id="channel-beta" class="channel-btn" type="button">Beta</button>
+          </div>
+        </div>
+
+        <div class="platform-toggle" aria-label="Platform">
+          <button id="platform-mac" class="platform-btn active" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.6 12.6c0-2.2 1.8-3.3 1.9-3.4-1-1.5-2.6-1.7-3.2-1.8-1.4-.1-2.6.8-3.3.8s-1.8-.8-2.9-.8c-1.5 0-2.9.9-3.7 2.2-1.6 2.8-.4 6.9 1.1 9.1.8 1.1 1.7 2.4 2.9 2.3 1.1 0 1.6-.7 3-.7s1.8.7 3 .7c1.2 0 2-1.1 2.8-2.3.9-1.3 1.2-2.5 1.2-2.6 0 0-2.8-1.1-2.8-3.5Z"/>
+              <path d="M15.4 5.9c.6-.8 1.1-1.8 1-2.9-1 .1-2 .6-2.7 1.3-.6.7-1.1 1.8-1 2.8 1 .1 2-.5 2.7-1.2Z"/>
+            </svg>
+            macOS
+          </button>
+          <button id="platform-windows" class="platform-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M3 4.9 10.6 4v7.2H3V4.9Zm8.6-1L21 2.5v8.7h-9.4V3.9ZM3 12.2h7.6v7.3L3 18.5v-6.3Zm8.6 0H21v9.3l-9.4-1.3v-8Z"/>
+            </svg>
+            Windows
+          </button>
+          <button id="platform-linux" class="platform-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2c-2.1 0-3.8 1.8-3.8 4.2 0 1.2.3 2.3.8 3.3-.9 1.2-1.6 2.8-1.8 4.8l-2.3 3.5c-.5.7-.3 1.6.4 2.1.7.5 1.7.3 2.1-.4l1.4-2.1h6.4l1.4 2.1c.5.7 1.4.9 2.1.4.7-.5.9-1.4.4-2.1l-2.3-3.5c-.2-2-.9-3.6-1.8-4.8.5-1 .8-2.1.8-3.3C15.8 3.8 14.1 2 12 2Zm-1.1 4.4c0-.5.3-.9.7-.9s.7.4.7.9-.3.9-.7.9-.7-.4-.7-.9Zm2.6 0c0-.5.3-.9.7-.9s.7.4.7.9-.3.9-.7.9-.7-.4-.7-.9ZM9.4 15.8c.2-1.4.6-2.6 1.2-3.5.4.3.9.4 1.4.4s1-.1 1.4-.4c.6.9 1 2.1 1.2 3.5H9.4Z"/>
+            </svg>
+            Linux
+          </button>
+        </div>
+
+        <div id="arch-toggle" class="arch-toggle" aria-label="Architecture">
+          <button id="arch-arm64" class="arch-btn active" type="button">ARM64</button>
+          <button id="arch-x64" class="arch-btn" type="button">x64</button>
+        </div>
+
+        <div id="format-toggle" class="format-toggle" aria-label="Linux package format">
+          <button id="format-appimage" class="format-btn active" type="button">AppImage</button>
+          <button id="format-deb" class="format-btn" type="button">Ubuntu / Debian (.deb)</button>
+          <button id="format-rpm" class="format-btn" type="button">Fedora / RHEL (.rpm)</button>
+        </div>
+
+        <section id="download-section" class="download-wrapper">
+        <div class="download-links">
+          <a id="download-btn" class="download-btn" href="https://github.com/apotenza92/caul/releases/latest/download/Caul-macos-arm64.zip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <path d="M7 10l5 5 5-5"/>
+              <path d="M12 15V3"/>
+            </svg>
+            <span id="download-label">Download for Apple Silicon Mac</span>
+          </a>
+          <a id="secondary-download-btn" class="download-btn secondary" href="https://github.com/apotenza92/caul/releases/latest/download/caul-arm64.deb">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <path d="M7 10l5 5 5-5"/>
+              <path d="M12 15V3"/>
+            </svg>
+            <span id="secondary-download-label">Download .deb</span>
+          </a>
+        </div>
+        <div id="extra-download-links" class="extra-download-links"></div>
+        <div id="homebrew-section" class="homebrew-section">
+          <div id="homebrew-box" class="command-box" role="button" tabindex="0" aria-label="Copy Homebrew install command">
+            <div id="homebrew-label" class="command-label">Or install via Homebrew:</div>
+            <div class="format-command">
+              <code id="homebrew-code">brew tap apotenza92/tap && brew install --cask caul</code>
+              <button id="homebrew-copy" class="copy-btn" type="button" title="Copy command">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1Zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2Zm0 16H8V7h11v14Z"/>
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        </section>
+      </div>
+
+      <section id="coming-soon" class="coming-soon">
+        <strong>Coming soon</strong>
+        <span id="coming-soon-label">This platform is not available yet.</span>
+      </section>
+
+      <p class="beta-notice">Beta builds can change quickly and may be less stable than the stable channel.</p>
+    </main>
+
+    <script>
+      const repo = "apotenza92/caul";
+      const assetPrefix = location.pathname.includes("/docs/") ? ".." : ".";
+      const downloads = {
+        stable: {
+          linux: {
+            appImageArm64: `https://github.com/${repo}/releases/latest/download/caul-arm64.AppImage`,
+            debArm64: `https://github.com/${repo}/releases/latest/download/caul-arm64.deb`,
+            rpmArm64: `https://github.com/${repo}/releases/latest/download/caul-arm64.rpm`,
+            appImageX64: `https://github.com/${repo}/releases/latest/download/caul-x64.AppImage`,
+            debX64: `https://github.com/${repo}/releases/latest/download/caul-x64.deb`,
+            rpmX64: `https://github.com/${repo}/releases/latest/download/caul-x64.rpm`
+          },
+          mac: `https://github.com/${repo}/releases/latest/download/Caul-macos-arm64.zip`,
+          windows: {
+            arm64: `https://github.com/${repo}/releases/latest/download/Caul-windows-arm64-setup.exe`,
+            x64: `https://github.com/${repo}/releases/latest/download/Caul-windows-x64-setup.exe`
+          }
+        },
+        beta: {
+          linux: {
+            appImageArm64: `https://github.com/${repo}/releases/latest/download/caul-beta-arm64.AppImage`,
+            debArm64: `https://github.com/${repo}/releases/latest/download/caul-beta-arm64.deb`,
+            rpmArm64: `https://github.com/${repo}/releases/latest/download/caul-beta-arm64.rpm`,
+            appImageX64: `https://github.com/${repo}/releases/latest/download/caul-beta-x64.AppImage`,
+            debX64: `https://github.com/${repo}/releases/latest/download/caul-beta-x64.deb`,
+            rpmX64: `https://github.com/${repo}/releases/latest/download/caul-beta-x64.rpm`
+          },
+          mac: `https://github.com/${repo}/releases/latest/download/Caul-Beta-macos-arm64.zip`,
+          windows: {
+            arm64: `https://github.com/${repo}/releases/latest/download/Caul-Beta-windows-arm64-setup.exe`,
+            x64: `https://github.com/${repo}/releases/latest/download/Caul-Beta-windows-x64-setup.exe`
+          }
+        }
+      };
+      const assetSizes = {
+        "caul-arm64.AppImage": 196425023,
+        "caul-arm64.deb": 129561944,
+        "caul-arm64.rpm": 129561944,
+        "caul-beta-arm64.AppImage": 196428377,
+        "caul-beta-arm64.deb": 129583424,
+        "caul-beta-arm64.rpm": 129583424,
+        "Caul-Beta-macos-arm64.zip": 191359697,
+        "Caul-Beta-windows-arm64-setup.exe": 143720983,
+        "Caul-Beta-windows-x64-setup.exe": 152480606,
+        "caul-beta-x64.AppImage": 195554514,
+        "caul-beta-x64.deb": 129668900,
+        "caul-beta-x64.rpm": 129668900,
+        "Caul-macos-arm64.zip": 191178473,
+        "Caul-windows-arm64-setup.exe": 143720180,
+        "Caul-windows-x64-setup.exe": 152482194,
+        "caul-x64.AppImage": 195550088,
+        "caul-x64.deb": 129671352,
+        "caul-x64.rpm": 129671352
+      };
+      const state = {
+        channel: "stable",
+        platform: "mac",
+        arch: "arm64",
+        linuxFormat: "appimage"
+      };
+      const releaseAvailable = {
+        stable: false,
+        beta: false
+      };
+      const darkMode = window.matchMedia("(prefers-color-scheme: dark)");
+
+      function getIconSrc() {
+        if (state.channel === "beta") {
+          return darkMode.matches
+            ? `${assetPrefix}/assets/icons/beta/dark/icon-rounded.png`
+            : `${assetPrefix}/assets/icons/beta/icon-rounded.png`;
+        }
+
+        return darkMode.matches
+          ? `${assetPrefix}/assets/icons/dark/icon-rounded.png`
+          : `${assetPrefix}/assets/icons/icon-rounded.png`;
+      }
+
+      function setActive(selector, activeId) {
+        document.querySelectorAll(selector).forEach((item) => {
+          item.classList.toggle("active", item.id === activeId);
+        });
+      }
+
+      function assetNameFromUrl(url) {
+        try {
+          return decodeURIComponent(new URL(url).pathname.split("/").pop() || "");
+        } catch {
+          return "";
+        }
+      }
+
+      function formatAssetSize(bytes) {
+        if (!Number.isFinite(bytes) || bytes <= 0) {
+          return "";
+        }
+
+        return `${Math.round(bytes / 1_000_000)} MB`;
+      }
+
+      function labelWithSize(label, url) {
+        const size = formatAssetSize(assetSizes[assetNameFromUrl(url)]);
+        return size ? `${label} · ${size}` : label;
+      }
+
+      async function loadReleaseInfo() {
+        try {
+          const stableResponse = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
+          if (stableResponse.ok) {
+            const stable = await stableResponse.json();
+            releaseAvailable.stable = true;
+            document.getElementById("version-display").textContent = stable.tag_name;
+            document.getElementById("version-display").classList.add("visible");
+            updateAssetSizes(stable);
+          }
+
+          const betaResponse = await fetch(`https://api.github.com/repos/${repo}/releases?per_page=20`);
+          if (betaResponse.ok) {
+            const releases = await betaResponse.json();
+            const beta = releases.find((release) => release.prerelease);
+            if (beta) {
+              releaseAvailable.beta = true;
+              updateAssetSizes(beta);
+              const base = `https://github.com/${repo}/releases/download/${beta.tag_name}`;
+              downloads.beta.mac = `${base}/Caul-Beta-macos-arm64.zip`;
+              downloads.beta.windows = {
+                arm64: `${base}/Caul-Beta-windows-arm64-setup.exe`,
+                x64: `${base}/Caul-Beta-windows-x64-setup.exe`
+              };
+              downloads.beta.linux = {
+                appImageArm64: `${base}/caul-beta-arm64.AppImage`,
+                debArm64: `${base}/caul-beta-arm64.deb`,
+                rpmArm64: `${base}/caul-beta-arm64.rpm`,
+                appImageX64: `${base}/caul-beta-x64.AppImage`,
+                debX64: `${base}/caul-beta-x64.deb`,
+                rpmX64: `${base}/caul-beta-x64.rpm`
+              };
+            }
+          }
+        } catch {
+          // Release metadata may be unavailable during GitHub API downtime or rate limits.
+        }
+      }
+
+      function updateAssetSizes(release) {
+        if (!release || !Array.isArray(release.assets)) {
+          return;
+        }
+
+        release.assets.forEach((asset) => {
+          if (asset.name && Number.isFinite(asset.size)) {
+            assetSizes[asset.name] = asset.size;
+          }
+        });
+      }
+
+      function updateDownload() {
+        const icon = document.getElementById("app-icon");
+        const download = document.getElementById("download-btn");
+        const archToggle = document.getElementById("arch-toggle");
+        const formatToggle = document.getElementById("format-toggle");
+        const homebrewSection = document.getElementById("homebrew-section");
+        const homebrewCode = document.getElementById("homebrew-code");
+        const homebrewLabel = document.getElementById("homebrew-label");
+        const homebrewCopy = document.getElementById("homebrew-copy");
+        const downloadLabel = document.getElementById("download-label");
+        const downloadSection = document.getElementById("download-section");
+        const secondaryDownload = document.getElementById("secondary-download-btn");
+        const secondaryDownloadLabel = document.getElementById("secondary-download-label");
+        const extraDownloadLinks = document.getElementById("extra-download-links");
+        const comingSoon = document.getElementById("coming-soon");
+        const comingSoonLabel = document.getElementById("coming-soon-label");
+        const channelDownloads = downloads[state.channel];
+        const fallbackDownloads = downloads.stable;
+
+        document.body.classList.toggle("beta-mode", state.channel === "beta");
+        icon.src = getIconSrc();
+
+        setActive(".channel-btn", `channel-${state.channel}`);
+        setActive(".platform-btn", `platform-${state.platform}`);
+        setActive(".arch-btn", `arch-${state.arch}`);
+        setActive(".format-btn", `format-${state.linuxFormat}`);
+
+        homebrewCopy.querySelector("span").textContent = "Copy";
+        secondaryDownload.style.display = "none";
+        extraDownloadLinks.style.display = "none";
+        extraDownloadLinks.innerHTML = "";
+        archToggle.style.display = state.platform === "mac" ? "none" : "flex";
+        formatToggle.style.display = state.platform === "linux" ? "flex" : "none";
+
+        if (!releaseAvailable[state.channel]) {
+          downloadSection.style.display = "none";
+          homebrewSection.style.display = "none";
+          comingSoon.style.display = "block";
+          comingSoonLabel.textContent = state.channel === "beta"
+            ? "Caul beta downloads will appear after the first Caul beta release."
+            : "Caul downloads will appear after the first Caul release.";
+          return;
+        }
+
+        if (state.platform === "windows") {
+          const windowsDownloads = channelDownloads.windows || {};
+          const windowsDownload = windowsDownloads[state.arch] || "";
+
+          if (!windowsDownload) {
+            downloadSection.style.display = "none";
+            comingSoon.style.display = "block";
+            comingSoonLabel.textContent = "Caul for Windows beta is coming soon.";
+            return;
+          }
+
+          downloadSection.style.display = "flex";
+          homebrewSection.style.display = "none";
+          comingSoon.style.display = "none";
+          download.href = windowsDownload;
+          const label = state.arch === "arm64"
+            ? "Download for Windows 11 ARM64"
+            : "Download for Windows x64";
+          downloadLabel.textContent = labelWithSize(label, windowsDownload);
+          download.removeAttribute("aria-disabled");
+          download.removeAttribute("tabindex");
+          return;
+        }
+
+        if (state.platform === "linux") {
+          const linuxDownloads = channelDownloads.linux || {};
+          const suffix = state.arch === "arm64" ? "Arm64" : "X64";
+          const architectureLabel = state.arch === "arm64" ? "ARM64" : "x64";
+          const appImage = linuxDownloads[`appImage${suffix}`] || "";
+          const deb = linuxDownloads[`deb${suffix}`] || "";
+          const rpm = linuxDownloads[`rpm${suffix}`] || "";
+          const selectedDownload = state.linuxFormat === "deb"
+            ? deb
+            : state.linuxFormat === "rpm"
+              ? rpm
+              : appImage;
+
+          if (!selectedDownload) {
+            downloadSection.style.display = "none";
+            comingSoon.style.display = "block";
+            comingSoonLabel.textContent = "Caul for Linux beta is coming soon.";
+            return;
+          }
+
+          downloadSection.style.display = "flex";
+          homebrewSection.style.display = "none";
+          comingSoon.style.display = "none";
+          download.href = selectedDownload;
+          const label = state.linuxFormat === "deb"
+            ? `Download .deb for Ubuntu ${architectureLabel}`
+            : state.linuxFormat === "rpm"
+              ? `Download .rpm for Fedora ${architectureLabel}`
+              : `Download AppImage for Linux ${architectureLabel}`;
+          downloadLabel.textContent = labelWithSize(label, selectedDownload);
+          download.removeAttribute("aria-disabled");
+          download.removeAttribute("tabindex");
+          return;
+        }
+
+        downloadSection.style.display = "flex";
+        homebrewSection.style.display = "block";
+        comingSoon.style.display = "none";
+        homebrewCode.textContent = state.channel === "beta"
+          ? "brew tap apotenza92/tap && brew install --cask caul@beta"
+          : "brew tap apotenza92/tap && brew install --cask caul";
+        homebrewLabel.textContent = state.channel === "beta"
+          ? "Or install via Homebrew (Beta):"
+          : "Or install via Homebrew:";
+        download.href = channelDownloads.mac || fallbackDownloads.mac;
+        downloadLabel.textContent = labelWithSize("Download for Apple Silicon Mac", download.href);
+        download.removeAttribute("aria-disabled");
+        download.removeAttribute("tabindex");
+      }
+
+      document.getElementById("channel-stable").addEventListener("click", () => {
+        state.channel = "stable";
+        updateDownload();
+      });
+      document.getElementById("channel-beta").addEventListener("click", () => {
+        state.channel = "beta";
+        updateDownload();
+      });
+      document.getElementById("platform-mac").addEventListener("click", () => {
+        state.platform = "mac";
+        updateDownload();
+      });
+      document.getElementById("platform-windows").addEventListener("click", () => {
+        state.platform = "windows";
+        updateDownload();
+      });
+      document.getElementById("platform-linux").addEventListener("click", () => {
+        state.platform = "linux";
+        updateDownload();
+      });
+      document.getElementById("arch-arm64").addEventListener("click", () => {
+        state.arch = "arm64";
+        updateDownload();
+      });
+      document.getElementById("arch-x64").addEventListener("click", () => {
+        state.arch = "x64";
+        updateDownload();
+      });
+      document.getElementById("format-appimage").addEventListener("click", () => {
+        state.linuxFormat = "appimage";
+        updateDownload();
+      });
+      document.getElementById("format-deb").addEventListener("click", () => {
+        state.linuxFormat = "deb";
+        updateDownload();
+      });
+      document.getElementById("format-rpm").addEventListener("click", () => {
+        state.linuxFormat = "rpm";
+        updateDownload();
+      });
+      document.getElementById("homebrew-box").addEventListener("click", async () => {
+        const command = document.getElementById("homebrew-code").textContent;
+        const copyLabel = document.getElementById("homebrew-copy");
+        const copyText = copyLabel.querySelector("span");
+        try {
+          await navigator.clipboard.writeText(command);
+          copyText.textContent = "Copied";
+        } catch {
+          copyText.textContent = "Select";
+        }
+      });
+      document.getElementById("homebrew-box").addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          event.currentTarget.click();
+        }
+      });
+
+      loadReleaseInfo().then(updateDownload);
+      updateDownload();
+      darkMode.addEventListener("change", updateDownload);
+    </script>
+  </body>
+</html>
