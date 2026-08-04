@@ -1,0 +1,4 @@
+Caul download-page publication bundle
+source-commit=803e51c4ff2cc6d52ef55891a0eae52c52d0fd6c
+destination=apotenza92/apotenza92.github.io:caul/
+Apply these exact reviewed bytes manually.
