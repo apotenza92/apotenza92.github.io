@@ -1,4 +1,4 @@
 Butter Paper download-page publication bundle
-source-commit=e097ca4af0cb2386ce2f9369bed7c518049dc97a
+source-commit=e6e0b7153822113c13c61c328c6557fcc8b1ecb7
 destination=apotenza92/apotenza92.github.io:butter-paper/
 Apply these exact reviewed bytes manually.
